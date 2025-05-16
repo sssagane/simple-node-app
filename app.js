@@ -1,28 +1,21 @@
 const http = require('http');
 
-describe('Basic HTTP Server Test', () => {
-let server;
+const handler = (req, res) => {
+res.statusCode = 200;
+res.setHeader('Content-Type', 'text/plain');
+res.end('Hello World from Node.js  shyam sanjay sagane!\n');
+};
 
-beforeAll((done) => {
-    const app = require('./app');
-    server = http.createServer(app);
-    server.listen(3001, done); // Use test port
+if (require.main === module) {
+const port = 3000;
+const hostname = '0.0.0.0';
+const server = http.createServer(handler);
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
 });
+}
 
-afterAll((done) => {
-    server.close(done);
-});
+module.exports = handler;
 
-test('GET / should return Hello World', (done) => {
-    http.get('http://localhost:3001', (res) => {
-let data = '';
-res.on('data', chunk => data += chunk);
-res.on('end', () => {
-        expect(data).toContain('Hello World from Node.js');
-        done();
-});
-    });
-});
-});
 
 
