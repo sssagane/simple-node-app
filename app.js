@@ -1,16 +1,28 @@
-// app.js
-
 const http = require('http');
 
-const hostname = '0.0.0.0';
-const port = 3000;
+describe('Basic HTTP Server Test', () => {
+let server;
 
-const server = http.createServer((req, res) => {
-res.statusCode = 200;
-res.setHeader('Content-Type', 'text/plain');
-res.end('Hello World from Node.js\n');
+beforeAll((done) => {
+    const app = require('./app');
+    server = http.createServer(app);
+    server.listen(3001, done); // Use test port
 });
 
-server.listen(port, hostname, () => {
-console.log(`Server running at http://${hostname}:${port}/`);
+afterAll((done) => {
+    server.close(done);
 });
+
+test('GET / should return Hello World', (done) => {
+    http.get('http://localhost:3001', (res) => {
+let data = '';
+res.on('data', chunk => data += chunk);
+res.on('end', () => {
+        expect(data).toContain('Hello World from Node.js');
+        done();
+});
+    });
+});
+});
+
+
